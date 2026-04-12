@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   },
   description:
     'Convert PDF, images, video, and audio files online for free. 300+ formats. No signup. Runs in your browser.',
-  metadataBase: new URL('https://convertpro.io'),
+  metadataBase: new URL('https://convertpro-online.vercel.app'),
   openGraph: {
     siteName: 'ConvertPro',
     type: 'website',
