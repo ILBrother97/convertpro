@@ -2,10 +2,10 @@ import { MetadataRoute } from 'next'
 import { TOOLS } from '@/lib/tools'
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const base = 'https://convertpro.io'
+  const base = 'https://convertpro-online.vercel.app'
 
   const toolPages: MetadataRoute.Sitemap = TOOLS.map((tool) => ({
-    url: `${base}/${tool.slug}`,
+    url: `https://convertpro-online.vercel.app/${tool.slug}`,
     lastModified: new Date(),
     changeFrequency: 'monthly',
     priority: 0.8,

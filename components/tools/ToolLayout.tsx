@@ -14,7 +14,7 @@ export function ToolLayout({ tool, children }: Props) {
     '@context': 'https://schema.org',
     '@type': 'WebApplication',
     name: tool.name,
-    url: `https://convertpro.io/${tool.slug}`,
+    url: `https://convertpro-online.vercel.app/${tool.slug}`,
     applicationCategory: 'UtilitiesApplication',
     operatingSystem: 'All',
     offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
