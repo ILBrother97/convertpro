@@ -75,8 +75,16 @@ export function ToolLayout({ tool, children }: Props) {
 
       {/* Main content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <div className="flex gap-8">
-          {/* Left: Tool + FAQ */}
+        <div className="flex flex-col lg:flex-row gap-8">
+          
+          {/* Left Sidebar Ad (Desktop only) */}
+          <div className="hidden xl:flex flex-col gap-6 w-44 flex-shrink-0">
+            <div className="sticky top-24">
+              <AdSlot format="sidebar" />
+            </div>
+          </div>
+
+          {/* Center: Tool + FAQ */}
           <div className="flex-1 min-w-0">
             {/* Tool UI */}
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
@@ -85,7 +93,7 @@ export function ToolLayout({ tool, children }: Props) {
 
             {/* In-content ad */}
             <div className="mt-8 flex justify-center">
-              <AdSlot slot="1234567890" format="in-content" />
+              <AdSlot format="in-content" />
             </div>
 
             {/* FAQ */}
@@ -119,10 +127,10 @@ export function ToolLayout({ tool, children }: Props) {
             )}
           </div>
 
-          {/* Right: Sidebar ad (desktop only) */}
+          {/* Right Sidebar Ad (Desktop only) */}
           <div className="hidden lg:flex flex-col gap-6 w-44 flex-shrink-0">
             <div className="sticky top-24">
-              <AdSlot slot="0987654321" format="sidebar" />
+              <AdSlot format="sidebar" />
             </div>
           </div>
         </div>
