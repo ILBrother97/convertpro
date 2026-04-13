@@ -42,14 +42,6 @@ export function BrandLogo({ className = '', size = 200 }: LogoProps) {
         <path d="M -40,110 L 10,10 C -10,10 -30,30 -60,60 Z" 
               fill="url(#shadowGradient)" />
       </g>
-
-      <text x="250" y="420" 
-            fontFamily="'Segoe UI', -apple-system, Roboto, Helvetica, Arial, sans-serif" 
-            fontWeight="800" 
-            fontSize="54" 
-            fill="#1a1040" 
-            textAnchor="middle" 
-            letterSpacing="-1.5">ConvertPro</text>
     </svg>
   )
 }
