@@ -30,6 +30,22 @@ export type CloudConvertJobStatus = {
 
 const CC_BASE = 'https://api.cloudconvert.com/v2'
 
+/**
+ * Gets all available CloudConvert API keys from environment variables.
+ * Supports up to 5 keys for failover redundancy.
+ */
+function getApiKeys(): string[] {
+  const keys = [
+    process.env.CLOUDCONVERT_API_KEY,
+    process.env.CLOUDCONVERT_API_KEY_2,
+    process.env.CLOUDCONVERT_API_KEY_3,
+    process.env.CLOUDCONVERT_API_KEY_4,
+    process.env.CLOUDCONVERT_API_KEY_5,
+  ].filter((k): k is string => !!k)
+  
+  return keys
+}
+
 export async function createJob(
   tool: string,
   fileBase64: string,
@@ -67,56 +83,93 @@ export async function createJob(
     },
   }
 
-  const res = await fetch(`${CC_BASE}/jobs`, {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${process.env.CLOUDCONVERT_API_KEY}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(payload),
-  })
+  const keys = getApiKeys()
+  let lastError = 'No API keys configured'
 
-  if (!res.ok) {
-    const err = await res.json()
-    throw new Error(err.message ?? 'CloudConvert job creation failed')
-  }
+  // Failover loop: Try every key until success
+  for (const key of keys) {
+    try {
+      const res = await fetch(`${CC_BASE}/jobs`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${key}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      })
 
-  const data = await res.json()
-  return data.data.id as string
-}
+      if (res.ok) {
+        const data = await res.json()
+        return data.data.id as string
+      }
 
-export async function getJobStatus(jobId: string): Promise<CloudConvertJobStatus> {
-  const res = await fetch(`${CC_BASE}/jobs/${jobId}`, {
-    headers: {
-      Authorization: `Bearer ${process.env.CLOUDCONVERT_API_KEY}`,
-    },
-  })
-
-  if (!res.ok) return { status: 'error', message: 'Failed to fetch job status' }
-
-  const data = await res.json()
-  const job = data.data
-
-  if (job.status === 'error') {
-    return { status: 'error', message: job.tasks?.find((t: { status: string; message?: string }) => t.status === 'error')?.message ?? 'Conversion failed' }
-  }
-
-  if (job.status === 'finished') {
-    const exportTask = job.tasks?.find((t: { operation: string; status: string; result?: { files?: Array<{ url: string; filename: string; size: number }> } }) => t.operation === 'export/url' && t.status === 'finished')
-    const file = exportTask?.result?.files?.[0]
-    return {
-      status: 'done',
-      downloadUrl: file?.url,
-      fileName: file?.filename,
-      fileSize: file?.size,
+      const err = await res.json()
+      lastError = err.message ?? 'Unknown error'
+      
+      // If error is related to credits or auth, continue to next key
+      if (res.status === 402 || res.status === 401) {
+        console.warn(`CloudConvert Key failed (Status ${res.status}). Trying next key...`)
+        continue
+      }
+      
+      // If it's a structural error (bad file, etc), don't retry
+      throw new Error(lastError)
+    } catch (e) {
+      if (e instanceof Error && (e.message.includes('402') || e.message.includes('401'))) {
+        continue
+      }
+      throw e
     }
   }
 
-  // Calculate rough progress from tasks
-  const tasks: Array<{ status: string }> = job.tasks ?? []
-  const done = tasks.filter((t) => t.status === 'finished').length
-  const total = tasks.length
-  const percent = total > 0 ? Math.round((done / total) * 100) : 20
+  throw new Error(`All conversion slots are currently busy. Error: ${lastError}`)
+}
 
-  return { status: 'processing', percent }
+export async function getJobStatus(jobId: string): Promise<CloudConvertJobStatus> {
+  const keys = getApiKeys()
+  let lastRes: Response | null = null
+
+  // We need to find which key was used for this jobId, or just try them all
+  // Since jobId is unique to an account, we try until we get a 200 OK
+  for (const key of keys) {
+    const res = await fetch(`${CC_BASE}/jobs/${jobId}`, {
+      headers: {
+        Authorization: `Bearer ${key}`,
+      },
+    })
+
+    if (res.ok) {
+      const data = await res.json()
+      const job = data.data
+
+      if (job.status === 'error') {
+        return { 
+          status: 'error', 
+          message: job.tasks?.find((t: { status: string; message?: string }) => t.status === 'error')?.message ?? 'Conversion failed' 
+        }
+      }
+
+      if (job.status === 'finished') {
+        const exportTask = job.tasks?.find((t: { operation: string; status: string; result?: { files?: Array<{ url: string; filename: string; size: number }> } }) => t.operation === 'export/url' && t.status === 'finished')
+        const file = exportTask?.result?.files?.[0]
+        return {
+          status: 'done',
+          downloadUrl: file?.url,
+          fileName: file?.filename,
+          fileSize: file?.size,
+        }
+      }
+
+      const tasks: Array<{ status: string }> = job.tasks ?? []
+      const done = tasks.filter((t) => t.status === 'finished').length
+      const total = tasks.length
+      const percent = total > 0 ? Math.round((done / total) * 100) : 20
+
+      return { status: 'processing', percent }
+    }
+    
+    lastRes = res
+  }
+
+  return { status: 'error', message: 'Failed to find job across all configured accounts.' }
 }
