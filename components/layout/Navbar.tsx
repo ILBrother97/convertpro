@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { useState } from 'react'
 import { Menu, X } from 'lucide-react'
+import { BrandLogo } from './BrandLogo'
 
 export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false)
@@ -20,10 +21,8 @@ export function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-1.5 group">
-            <div className="w-8 h-8 bg-gradient-to-tr from-indigo-600 to-purple-600 rounded-lg flex items-center justify-center text-white font-black text-xl shadow-lg shadow-indigo-200 group-hover:scale-110 transition-transform">
-              C
-            </div>
+          <Link href="/" className="flex items-center gap-2.5 group">
+            <BrandLogo size={34} className="group-hover:scale-110 transition-transform drop-shadow-sm" />
             <div className="font-bold text-2xl tracking-tight">
               <span className="text-gray-900 group-hover:text-indigo-600 transition-colors">Convert</span>
               <span className="text-indigo-600">Pro</span>
