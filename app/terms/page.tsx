@@ -52,7 +52,7 @@ export default function TermsPage() {
           },
           {
             title: '9. Contact',
-            body: 'For questions about these Terms, contact us at legal@convertpro.io.',
+            body: 'For questions about these Terms, contact us at legal@convertpro-online.vercel.app.',
           },
         ].map((section) => (
           <section key={section.title}>

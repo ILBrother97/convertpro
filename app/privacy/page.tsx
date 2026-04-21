@@ -49,11 +49,11 @@ Analytics: Anonymous usage data retained for up to 26 months per Google Analytic
           },
           {
             title: '6. Your Rights',
-            body: `You have the right to access, correct, or delete any personal information we hold. Since we collect minimal personal data, this primarily applies to analytics data. Contact us at privacy@convertpro.io to exercise your rights.`,
+            body: `You have the right to access, correct, or delete any personal information we hold. Since we collect minimal personal data, this primarily applies to analytics data. Contact us at privacy@convertpro-online.vercel.app to exercise your rights.`,
           },
           {
             title: '7. Contact',
-            body: `For privacy-related questions, contact us at privacy@convertpro.io.`,
+            body: `For privacy-related questions, contact us at privacy@convertpro-online.vercel.app.`,
           },
         ].map((section) => (
           <section key={section.title}>

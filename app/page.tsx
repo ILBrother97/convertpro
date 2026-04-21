@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   title: 'ConvertPro – Free Online File Converter | 300+ Formats',
   description:
     'Convert PDF, images, video, and audio files online for free. No signup. 300+ formats. Works in your browser.',
-  alternates: { canonical: 'https://convertpro.io' },
+  alternates: { canonical: 'https://convertpro-online.vercel.app' },
 }
 
 const STATS = [

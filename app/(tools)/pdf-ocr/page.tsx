@@ -7,8 +7,8 @@ const tool = getToolBySlug('pdf-ocr')!
 
 export const metadata: Metadata = {
   title: tool.title, description: tool.description,
-  alternates: { canonical: `https://convertpro.io/${tool.slug}` },
-  openGraph: { title: tool.title, description: tool.description, url: `https://convertpro.io/${tool.slug}`, siteName: 'ConvertPro', type: 'website' },
+  alternates: { canonical: `https://convertpro-online.vercel.app/${tool.slug}` },
+  openGraph: { title: tool.title, description: tool.description, url: `https://convertpro-online.vercel.app/${tool.slug}`, siteName: 'ConvertPro', type: 'website' },
 }
 
 export default function Page() {
