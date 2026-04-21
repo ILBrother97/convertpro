@@ -37,7 +37,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={inter.variable}>
       <head>
-        <meta name="google-site-verification" content="xIxZxrVCSG1Wwh4lfnKMXa1D2k9FkUjBHvu_kM3PPto" />
+        <meta name="google-site-verification" content="YMFANnP5KMDz6gZqTgriiHSOR-6g2uaA5NAHaKHxpTM" />
         {isRealAdsense && (
           <Script
             async
